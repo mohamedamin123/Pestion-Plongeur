@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@drawable/cadre_evaluation"
+    android:layout_margin="8dp"
+    android:elevation="4dp">
+
+    <!-- Nom de l'Entreprise -->
+    <TextView
+        android:id="@+id/entreprise_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Nom de l'Entreprise"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:paddingBottom="8dp"/>
+
+    <!-- Ligne pour le numéro de téléphone -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="8dp">
+
+        <TextView
+            android:id="@+id/tv_tel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray"
+            android:text="@string/numero"
+            android:textSize="16sp"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/img_phone"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/tel"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="5dp"/>
+    </LinearLayout>
+
+    <!-- Conteneur pour la quantité avec boutons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingVertical="8dp">
+
+        <!-- Bouton "-" -->
+        <Button
+            android:id="@+id/btn_decrease"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:text="@string/minus"
+            android:textSize="20sp"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:shape="oval"/>
+
+        <!-- Quantité -->
+        <TextView
+            android:id="@+id/plongeur_quantite"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/zero"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_marginHorizontal="10dp"/>
+
+        <!-- Bouton "+" -->
+        <Button
+            android:id="@+id/btn_increase"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:text="@string/add"
+            android:textSize="20sp"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:textColor="@android:color/white"
+            android:shape="oval"/>
+    </LinearLayout>
+
+<!--    &lt;!&ndash; Boutons Supprimer et Éditer &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:gravity="center"-->
+<!--        android:paddingTop="10dp">-->
+
+<!--        &lt;!&ndash; Bouton Éditer &ndash;&gt;-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_editer"-->
+<!--            android:layout_width="130dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/editer"-->
+<!--            android:backgroundTint="@android:color/holo_blue_dark"-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:layout_marginEnd="8dp"/>-->
+
+<!--        &lt;!&ndash; Bouton Supprimer &ndash;&gt;-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_supprimer"-->
+<!--            android:layout_width="130dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="@string/supprimer"-->
+<!--            android:backgroundTint="@android:color/holo_red_light"-->
+<!--            android:textColor="@android:color/white"/>-->
+<!--    </LinearLayout>-->
+
+</LinearLayout>

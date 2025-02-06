@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.entreprise.ListEntrepriseActivity"
+    android:orientation="vertical">
+
+
+    <!-- Titre au centre de l'écran -->
+    <TextView
+        android:id="@+id/titre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Liste des Entreprises"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:padding="10dp"
+        />
+
+    <!-- Barre de recherche -->
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/search_bar_background"
+        android:hint="@string/rechercher_par_nom"
+        android:inputType="text"
+        android:minHeight="48dp"
+        android:padding="8dp" />
+
+
+    <!-- RecyclerView pour afficher les données -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyler_entreprise"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Conteneur horizontal pour les boutons en bas de l'écran -->
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Bouton Annuler -->
+        <Button
+            android:id="@+id/btn_annuler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retour"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Bouton Ajouter -->
+        <Button
+            android:id="@+id/btn_ajouter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_blue_dark"
+            android:textColor="@android:color/white"
+            android:text="@string/ajouter" />
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

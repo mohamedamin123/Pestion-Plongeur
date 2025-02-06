@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp"
+    tools:context=".view.MainActivity">
+
+    <!-- Texte de bienvenue -->
+    <TextView
+        android:id="@+id/tvWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenue dans l'application de gestion des équipements"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textColor="@color/black" />
+
+    <!-- Image de l'accueil -->
+    <ImageView
+        android:id="@+id/ivWelcome"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/plongeur"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="15dp" />
+
+    <!-- Bouton pour voir les équipements -->
+    <Button
+        android:id="@+id/btnViewEquipments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mon stock"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/white"
+        android:padding="10dp" />
+
+    <!-- Bouton pour ajouter un équipement -->
+    <Button
+        android:id="@+id/btnEntreprise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Les entreprises"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/green"
+        android:textColor="@color/white"
+        android:padding="10dp" />
+
+    <!-- Bouton pour transférer un équipement -->
+    <Button
+        android:id="@+id/btnHistorique"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Historique"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/orange"
+        android:textColor="@color/white"
+        android:padding="10dp" />
+
+</LinearLayout>
