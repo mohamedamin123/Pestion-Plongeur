@@ -126,7 +126,8 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
 
     private void voirEquipements(Entreprise entreprise) {
         Intent intent = new Intent(this, ListEquipmentsActivity.class);
-        intent.putExtra("entrepriseId", entreprise.getIdEntreprise());
+        intent.putExtra("id", entreprise.getIdEntreprise());
+        intent.putExtra("nom", entreprise.getNom());
         startActivity(intent);
     }
 
@@ -143,6 +144,7 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
                 .setPositiveButton("Oui", (dialog, which) -> {
                     entreprises.remove(entreprise);
                     adapter.updateList(entreprises);
+                    controller.deleteById(entreprise.getIdEntreprise());
                     Toast.makeText(this, "Entreprise supprimée", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss())

@@ -2,6 +2,7 @@ package com.example.plongeur.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         binding.btnViewEquipments.setOnClickListener(v -> toListEquipment());
         binding.btnEntreprise.setOnClickListener(v -> toListEntreprise());
+        binding.btnHistorique.setOnClickListener(v -> toListHistorique());
+    }
+
+    private void toListHistorique() {
+        Toast.makeText(this, "en cour developpement", Toast.LENGTH_SHORT).show();
     }
 
     private void toListEquipment() {

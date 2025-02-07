@@ -24,6 +24,7 @@ public class ListEquipmentsActivity extends AppCompatActivity {
     private EquipmentAdapter adapter;
     private List<Equipment>equipments;
     private EquipementController controller;
+    int id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +37,11 @@ public class ListEquipmentsActivity extends AppCompatActivity {
         super.onStart();
         equipments = new ArrayList<>();
         controller=new ViewModelProvider(this).get(EquipementController.class);;
+         id=getIntent().getIntExtra("id",-1);
+
 
         getData();
+        changeTitre();
 
 
         adapter = new EquipmentAdapter(equipments,this);
@@ -48,6 +52,14 @@ public class ListEquipmentsActivity extends AppCompatActivity {
         binding.btnAnnuler.setOnClickListener(v->toMain());
         binding.btnAjouter.setOnClickListener(v->save());
     }
+
+    private void changeTitre() {
+        String nom=getIntent().getStringExtra("nom");
+        if(nom!=null){
+            binding.titre.setText("Équipements de l'entreprise : "+nom);
+        }
+    }
+
 
     private void save() {
         for (int i = 0; i < equipments.size(); i++) {
@@ -62,26 +74,44 @@ public class ListEquipmentsActivity extends AppCompatActivity {
 
 
     private void toMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+       finish();
     }
 
     private void getData() {
-        equipments.clear();
 
-        // Charger uniquement les équipements qui ne sont pas associés à une entreprise
-        controller.findStockPersonnel().observe(this, new Observer<List<Equipment>>() {
-            @Override
-            public void onChanged(List<Equipment> stockEquipments) {
-                if (stockEquipments.isEmpty()) {
-                    // Ajouter des équipements par défaut si le stock est vide
-                    ajouterEquipementsParDefaut();
-                } else {
-                    equipments.addAll(stockEquipments);
+        if(id==-1) {
+            // Charger uniquement les équipements qui ne sont pas associés à une entreprise
+            controller.findStockPersonnel().observe(this, new Observer<List<Equipment>>() {
+                @Override
+                public void onChanged(List<Equipment> stockEquipments) {
+                    equipments.clear();
+                    if (stockEquipments.isEmpty()) {
+
+                        // Ajouter des équipements par défaut si le stock est vide
+                        ajouterEquipementsParDefaut();
+                    } else {
+                        equipments.addAll(stockEquipments);
+
+                    }
                     adapter.notifyDataSetChanged();
                 }
-            }
-        });
+            });
+        } else {
+            controller.findByIdEntreprise(id).observe(this, new Observer<List<Equipment>>() {
+                @Override
+                public void onChanged(List<Equipment> equipment) {
+                    equipments.clear();
+                    if(equipment.isEmpty()) {
+                        ajouterEquipementsParDefaut();
+                    }else {
+                        equipments.addAll(equipment);
+                    }
+
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+
     }
 
     // Insérer des équipements par défaut dans le stock personnel
@@ -98,6 +128,8 @@ public class ListEquipmentsActivity extends AppCompatActivity {
         };
 
         for (Equipment equipment : defaultEquipments) {
+            if(id!=-1)
+                equipment.setIdEntreprise(id);
             controller.insert(equipment);
         }
     }

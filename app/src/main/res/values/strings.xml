@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Plongeur</string>
-    <string name="liste_des_equipments">Liste des Equipments</string>
+    <string name="liste_des_equipements">Liste de mes équipements</string>
     <string name="minus">-</string>
     <string name="add">+</string>
     <string name="zero">0</string>
@@ -8,11 +8,11 @@
     <string name="retour">Retour</string>
     <string name="ajouter">Ajouter</string>
     <string name="supprimer">Supprimer</string>
-    <string name="editer">Editer</string>
-    <string name="numero">Numero de téléphone</string>
-    <string name="ajouter_entreprise">Ajouter Entreprise</string>
-    <string name="nom">Nom </string>
-    <string name="telephone">Telephone</string>
-    <string name="Nombre_plongeur">Nombre des plongeurs</string>
+    <string name="editer">Éditer</string>
+    <string name="numero">Numéro de téléphone</string>
+    <string name="ajouter_entreprise">Ajouter une entreprise</string>
+    <string name="nom">Nom</string>
+    <string name="telephone">Téléphone</string>
+    <string name="nombre_plongeurs">Nombre de plongeurs</string>
     <string name="enregistrer">Enregistrer</string>
 </resources>

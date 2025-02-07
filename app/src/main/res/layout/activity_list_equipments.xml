@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:layout_gravity="center"
-        android:text="@string/liste_des_equipments"
+        android:text="@string/liste_des_equipements"
         android:textStyle="bold"
         android:textSize="18sp" />
     <!-- RecyclerView pour afficher les données -->
