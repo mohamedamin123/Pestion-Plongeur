@@ -9,9 +9,13 @@ import android.text.TextWatcher;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.plongeur.R;
+import com.example.plongeur.controller.EntrepriseController;
+import com.example.plongeur.controller.EquipementController;
 import com.example.plongeur.databinding.ActivityListEntrepriseBinding;
 import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.view.MainActivity;
@@ -28,6 +32,7 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     private EntrepriseAdapter adapter;
     private List<Entreprise> entreprises;
     private List<Entreprise> filtred;
+    private EntrepriseController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +47,10 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
 
         entreprises = new ArrayList<>();
         filtred = new ArrayList<>();
-
+        controller=new ViewModelProvider(this).get(EntrepriseController.class);
         getData();
+
+
         adapter = new EntrepriseAdapter(entreprises, this, this);
 
         binding.recylerEntreprise.setLayoutManager(new LinearLayoutManager(this));
@@ -80,9 +87,14 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     }
 
     private void getData() {
-        entreprises.add(new Entreprise(1, "TTF", "95147455", 10));
-        entreprises.add(new Entreprise(2, "ganaXgana", "95147455", 7));
-        entreprises.add(new Entreprise(3, "ccc", "95147455", 5));
+        controller.findAll().observe(this, new Observer<List<Entreprise>>() {
+            @Override
+            public void onChanged(List<Entreprise> entreprises) {
+                ListEntrepriseActivity.this.entreprises.clear();
+                ListEntrepriseActivity.this.entreprises.addAll(entreprises);
+                adapter.updateList(entreprises);
+            }
+        });
     }
 
     private void toMain() {

@@ -14,4 +14,5 @@
     <string name="nom">Nom </string>
     <string name="telephone">Telephone</string>
     <string name="Nombre_plongeur">Nombre des plongeurs</string>
+    <string name="enregistrer">Enregistrer</string>
 </resources>

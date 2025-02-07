@@ -51,20 +51,7 @@ public class EntrepriseAdapter extends RecyclerView.Adapter<EntrepriseAdapter.En
         holder.binding.tvTel.setText(entreprise.getTelephone());
         holder.binding.plongeurQuantite.setText(MessageFormat.format("Nbr plongeurs : {0}", entreprise.getNbrPlongeur()));
 
-        // Gestion des boutons d'augmentation et de diminution
-        holder.binding.btnIncrease.setOnClickListener(v -> {
-            int currentQuantity = entreprise.getNbrPlongeur();
-            entreprise.setNbrPlongeur(currentQuantity + 1);
-            holder.binding.plongeurQuantite.setText(MessageFormat.format("Nbr plongeurs : {0}", entreprise.getNbrPlongeur()));
-        });
 
-        holder.binding.btnDecrease.setOnClickListener(v -> {
-            int currentQuantity = entreprise.getNbrPlongeur();
-            if (currentQuantity > 0) {
-                entreprise.setNbrPlongeur(currentQuantity - 1);
-                holder.binding.plongeurQuantite.setText(MessageFormat.format("Nbr plongeurs : {0}", entreprise.getNbrPlongeur()));
-            }
-        });
         holder.binding.imgPhone.setOnClickListener(v->{
             Intent callIntent = new Intent(Intent.ACTION_CALL);
             callIntent.setData(Uri.parse("tel:" + entreprise.getTelephone()));

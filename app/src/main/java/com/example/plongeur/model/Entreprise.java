@@ -1,20 +1,34 @@
 package com.example.plongeur.model;
 
-public class Entreprise {
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Entity(tableName = "entreprises")
+public class Entreprise {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "idEntreprise")
     private Integer idEntreprise;
     private String nom;
     private String telephone;
     private int nbrPlongeur;
+    @Ignore
+    private List<Equipment> equipment;
 
 
     public Entreprise(){
-
+        this.equipment=new ArrayList<>();
     }
     public Entreprise(String nom, String telephone, int nbrPlongeur) {
         this.nom = nom;
         this.telephone = telephone;
         this.nbrPlongeur = nbrPlongeur;
+        this.equipment=new ArrayList<>();
     }
 
     public Entreprise(Integer idEntreprise,String nom, String telephone, int nbrPlongeur) {
@@ -55,6 +69,14 @@ public class Entreprise {
 
     public void setNbrPlongeur(int nbrPlongeur) {
         this.nbrPlongeur = nbrPlongeur;
+    }
+
+    public List<Equipment> getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(List<Equipment> equipment) {
+        this.equipment = equipment;
     }
 
     @Override

@@ -1,55 +1,56 @@
 package com.example.plongeur.controller;
 
+import android.app.Application;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.model.Entreprise;
+import com.example.plongeur.model.Entreprise;
+import com.example.plongeur.repository.EntrepriseRepository;
 import com.example.plongeur.service.EntrepriseService;
 
 import java.util.List;
 
-public class EntrepriseController {
+public class EntrepriseController extends AndroidViewModel {
 
-    private EntrepriseService entrepriseService;
-
-    public EntrepriseController(List<Entreprise> Entreprises) {
-        this.entrepriseService = new EntrepriseService(Entreprises);
+    EntrepriseRepository repositiry;
+    public EntrepriseController(@NonNull Application application) {
+        super(application);
+        repositiry=new EntrepriseRepository(application);
     }
 
-    /**
-     * Retourne la liste complète des équipements
-     */
-    public List<Entreprise> findAllEntreprises() {
-        return entrepriseService.findAllEntreprises();
+    public void insert(Entreprise... Entreprises)
+    {
+        repositiry.insert(Entreprises);
     }
-    /**
-     * Recherche un équipement par ID
-     */
-    public Entreprise findEntrepriseById(int id) {
-        return entrepriseService.findEntrepriseById(id);
+    public  void update(Entreprise... Entreprises)
+    {
+        repositiry.update(Entreprises);
     }
-    /**
-     * Recherche un équipement par nom
-     */
-    public Entreprise findEntrepriseByName(String name) {
-        return entrepriseService.findEntrepriseByName(name);
+    public void delete(Entreprise... Entreprises)
+    {
+        repositiry.delete(Entreprises);
     }
-    /**
-     * Ajoute un nouvel équipement à la liste
-     */
-    public void ajouterEntreprise(Entreprise equipement) {
-        entrepriseService.ajouterEntreprise(equipement);
+
+    public void deleteById(Integer id)
+    {
+        repositiry.deleteById(id);
     }
-    /**
-     * Met à jour un équipement existant
-     */
-    public boolean updateEntreprise(Entreprise Entreprise) {
-        return entrepriseService.updateEntreprise(Entreprise);
+
+    public LiveData<Entreprise> findById(Integer id)
+    {
+        return repositiry.findById(id);
     }
-    /**
-     * Supprime un équipement par son ID
-     */
-    public boolean deleteEntreprise(int id) {
-        return entrepriseService.deleteEntreprise(id);
+
+    public LiveData<List<Entreprise>> findAll()
+    {
+        return  repositiry.findAll();
     }
+
 
 
 }

@@ -2,35 +2,48 @@ package com.example.plongeur.model;
 
 import android.net.Uri;
 
-
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
+@Entity(
+        tableName = "equipments",
+        foreignKeys = @ForeignKey(
+                entity = Entreprise.class,
+                parentColumns = "idEntreprise",
+                childColumns = "idEntreprise",
+                onDelete = ForeignKey.CASCADE
+        )
+)
 public class Equipment {
-
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "idEquipement")
     private Integer idEquipement;
+
     private String name;
     private int image;
     private String status;
     private int qte;
 
-    public Equipment(){
+    @ColumnInfo(index = true) // Indice pour améliorer les performances des requêtes
+    private Integer idEntreprise; // Permettre NULL
 
+    public Equipment() {
     }
 
     public Equipment(String name, int image) {
         this.name = name;
-        this.image=image;
+        this.image = image;
         this.status = "Disponible";
+        this.idEntreprise = null; // Aucune entreprise associée
     }
 
-    public Equipment(Integer idEquipement, String name, int image) {
-        this(name,image);
-        this.idEquipement = idEquipement;
-    }
-    public Equipment(Equipment equipment) {
-        this(equipment.getIdEquipement(), equipment.getName(), equipment.getImage());
-        this.status = equipment.getStatus();
+    public Equipment(String name, int image, Integer idEntreprise) {
+        this(name, image);
+        this.idEntreprise = idEntreprise; // Spécifier une entreprise si besoin
     }
 
-    // Getters and Setters
+    // Getters et Setters
 
 
     public Integer getIdEquipement() {
@@ -73,12 +86,11 @@ public class Equipment {
         this.qte = qte;
     }
 
-    @Override
-    public String toString() {
-        return "Equipement{" +
-                "idEquipement=" + idEquipement +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                '}';
+    public Integer getIdEntreprise() {
+        return idEntreprise;
+    }
+
+    public void setIdEntreprise(Integer idEntreprise) {
+        this.idEntreprise = idEntreprise;
     }
 }

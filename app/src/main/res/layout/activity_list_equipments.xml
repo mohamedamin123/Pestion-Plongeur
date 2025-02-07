@@ -24,16 +24,36 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Bouton Annuler -->
-    <Button
-        android:id="@+id/btn_annuler"
-        android:layout_width="wrap_content"
+    <!-- Conteneur horizontal pour les boutons en bas de l'écran -->
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/retour"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:textColor="@android:color/white"
-        android:layout_marginEnd="8dp" />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="16dp">
+
+        <!-- Bouton Annuler -->
+        <Button
+            android:id="@+id/btn_annuler"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retour"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Bouton Ajouter -->
+        <Button
+            android:id="@+id/btn_ajouter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_blue_dark"
+            android:textColor="@android:color/white"
+            android:text="@string/enregistrer" />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

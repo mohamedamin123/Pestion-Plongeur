@@ -46,4 +46,10 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation ("com.google.android.material:material:1.9.0")
 
+    // Room database
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler) // Use annotationProcessor for Java
+    androidTestImplementation(libs.room.testing)
+
+
 }

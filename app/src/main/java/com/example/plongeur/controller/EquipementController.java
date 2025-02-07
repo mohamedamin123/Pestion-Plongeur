@@ -1,54 +1,66 @@
 package com.example.plongeur.controller;
 
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
 import com.example.plongeur.model.Equipment;
+import com.example.plongeur.repository.EquipmentRepository;
 import com.example.plongeur.service.EquipmentService;
 
 import java.util.List;
 
-public class EquipementController {
+public class EquipementController extends AndroidViewModel {
 
-    private EquipmentService equipmentService;
-
-    public EquipementController(List<Equipment> equipments) {
-        this.equipmentService = new EquipmentService(equipments);
+    EquipmentRepository repositiry;
+    public EquipementController(@NonNull Application application) {
+        super(application);
+        repositiry=new EquipmentRepository(application);
     }
 
-    /**
-     * Retourne la liste complète des équipements
-     */
-    public List<Equipment> findAllEquipments() {
-        return equipmentService.findAllEquipments();
+    public void insert(Equipment... Equipments)
+    {
+        repositiry.insert(Equipments);
     }
-    /**
-     * Recherche un équipement par ID
-     */
-    public Equipment findEquipmentById(int id) {
-        return equipmentService.findEquipmentById(id);
+    public  void update(Equipment... Equipments)
+    {
+        repositiry.update(Equipments);
     }
-    /**
-     * Recherche un équipement par nom
-     */
-    public Equipment findEquipmentByName(String name) {
-        return equipmentService.findEquipmentByName(name);
+    public void delete(Equipment... Equipments)
+    {
+        repositiry.delete(Equipments);
     }
-    /**
-     * Ajoute un nouvel équipement à la liste
-     */
-    public void ajouterEquipment(Equipment equipement) {
-        equipmentService.ajouterEquipment(equipement);
+
+    public void deleteById(Integer id)
+    {
+        repositiry.deleteById(id);
     }
-    /**
-     * Met à jour un équipement existant
-     */
-    public boolean updateEquipment(Equipment equipment) {
-        return equipmentService.updateEquipment(equipment);
+
+    public LiveData<Equipment> findById(Integer id)
+    {
+        return repositiry.findById(id);
     }
-    /**
-     * Supprime un équipement par son ID
-     */
-    public boolean deleteEquipment(int id) {
-        return equipmentService.deleteEquipment(id);
+
+    public LiveData<List<Equipment>> findAll()
+    {
+        return  repositiry.findAll();
     }
+
+    public LiveData<List<Equipment>> findByIdEntreprise(int id)
+    {
+        return  repositiry.findByIdEntreprise(id);
+    }
+
+    public LiveData<List<Equipment>> findStockPersonnel() {
+        return repositiry.getStockPersonnel();
+    }
+
+
+
 
 
 }

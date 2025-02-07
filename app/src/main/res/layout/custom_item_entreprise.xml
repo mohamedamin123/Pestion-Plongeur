@@ -55,17 +55,6 @@
         android:gravity="center"
         android:paddingVertical="8dp">
 
-        <!-- Bouton "-" -->
-        <Button
-            android:id="@+id/btn_decrease"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="50dp"
-            android:text="@string/minus"
-            android:textSize="20sp"
-            android:backgroundTint="@android:color/holo_red_dark"
-            android:textColor="@android:color/white"
-            android:shape="oval"/>
 
         <!-- Quantité -->
         <TextView
@@ -76,20 +65,9 @@
             android:text="@string/zero"
             android:textSize="18sp"
             android:textColor="@android:color/black"
-            android:gravity="center"
             android:layout_marginHorizontal="10dp"/>
 
-        <!-- Bouton "+" -->
-        <Button
-            android:id="@+id/btn_increase"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="50dp"
-            android:text="@string/add"
-            android:textSize="20sp"
-            android:backgroundTint="@android:color/holo_green_dark"
-            android:textColor="@android:color/white"
-            android:shape="oval"/>
+
     </LinearLayout>
 
 <!--    &lt;!&ndash; Boutons Supprimer et Éditer &ndash;&gt;-->

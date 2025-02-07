@@ -1,6 +1,14 @@
 package com.example.plongeur.repository;
 
+import android.app.Application;
+
+import androidx.lifecycle.LiveData;
+
+import com.example.plongeur.DAO.EquipmentDAO;
+import com.example.plongeur.DAO.EquipmentDAO;
 import com.example.plongeur.R;
+import com.example.plongeur.config.MyRoomDataBase;
+import com.example.plongeur.model.Equipment;
 import com.example.plongeur.model.Equipment;
 
 import java.util.ArrayList;
@@ -8,67 +16,73 @@ import java.util.List;
 
 public class EquipmentRepository {
 
-    private List<Equipment> equipments;
 
-    public EquipmentRepository(List<Equipment> equipments ) {
-        this.equipments = equipments;
+    EquipmentDAO dao;
+
+
+    public EquipmentRepository(Application application) {
+        MyRoomDataBase db=MyRoomDataBase.getDatabase(application);
+        dao= db.equipmentDAO();
     }
 
-    /**
-     * Retourne la liste complète des équipements
-     */
-    public List<Equipment> findAllEquipments() {
-        return equipments;
-    }
 
-    /**
-     * Recherche un équipement par ID
-     */
-    public Equipment findEquipmentById(int id) {
-        for (Equipment equipment : equipments) {
-            if (equipment.getIdEquipement() == id) {
-                return equipment;
+    public void insert(Equipment... Equipmentss)
+    {
+        MyRoomDataBase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                dao.insert(Equipmentss);
             }
-        }
-        return null; // Si l'équipement n'existe pas
+        });
     }
-
-    /**
-     * Recherche un équipement par nom
-     */
-    public Equipment findEquipmentByNom(String nom) {
-        for (Equipment equipment : equipments) {
-            if (equipment.getName().equalsIgnoreCase(nom)) {
-                return equipment;
+    public  void update(Equipment... Equipmentss)
+    {
+        MyRoomDataBase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                dao.update(Equipmentss);
             }
-        }
-        return null; // Si l'équipement n'existe pas
+        });
     }
-
-    /**
-     * Ajoute un nouvel équipement à la liste
-     */
-    public void ajouterEquipment(Equipment equipment) {
-        equipments.add(equipment);
-    }
-
-    /**
-     * Met à jour un équipement existant
-     */
-    public boolean updateEquipment(Equipment equipment) {
-        for (int i = 0; i < equipments.size(); i++) {
-            if (equipments.get(i).getIdEquipement() == equipment.getIdEquipement()) {
-                equipments.set(i, equipment);
-                return true;
+    public void delete(Equipment... Equipmentss)
+    {
+        MyRoomDataBase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                dao.delete(Equipmentss);
             }
-        }
-        return false; // Équipement non trouvé
+        });
     }
 
-    /**
-     * Supprime un équipement par son ID
-     */
-    public boolean deleteEquipment(int id) {
-        return equipments.removeIf(equipment -> equipment.getIdEquipement() == id);
+    public void deleteById(Integer id)
+    {
+        MyRoomDataBase.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                dao.deleteById(id);
+            }
+        });
     }
+
+    public LiveData<Equipment> findById(Integer id)
+    {
+
+        return  dao.findById(id);
+
+    }
+
+    public LiveData<List<Equipment>> findAll()
+    {
+        return  dao.findAll();
+    }
+
+    public LiveData<List<Equipment>> findByIdEntreprise(int id)
+    {
+        return  dao.findByIdEntreprise(id);
+    }
+
+    public LiveData<List<Equipment>> getStockPersonnel() {
+        return dao.getStockPersonnel();
+    }
+
 }
