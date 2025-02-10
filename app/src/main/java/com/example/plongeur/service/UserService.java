@@ -41,6 +41,27 @@ public class UserService {
                 .addOnFailureListener(onFailureListener);
     }
 
+
+
+    public void ajouterUserAvecId(User user,
+                                  OnSuccessListener<Void> onSuccessListener,
+                                  OnFailureListener onFailureListener) {
+        // Vérifier si l'ID utilisateur (UID Firebase Auth) est bien défini
+        if (user.getIdUser() == null || user.getIdUser().isEmpty()) {
+            onFailureListener.onFailure(new Exception("L'ID utilisateur est requis"));
+            return;
+        }
+
+        // Ajouter le user avec son ID comme clé du document dans Firestore
+        db.collection(COLLECTION_NAME)
+                .document(user.getIdUser())  // Utilisation de l'UID comme ID du document
+                .set(user)  // Ajout direct sans générer un ID aléatoire
+                .addOnSuccessListener(aVoid -> onSuccessListener.onSuccess(null))
+                .addOnFailureListener(onFailureListener);
+    }
+
+
+
     /**
      * Lire un équipement par son ID.
      */

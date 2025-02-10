@@ -1,8 +1,5 @@
 package com.example.plongeur.model;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 import com.example.plongeur.R;
 
@@ -11,15 +8,12 @@ import java.util.Arrays;
 import java.util.List;
 
 
-//@Entity(tableName = "entreprises")
 public class Entreprise {
-//    @PrimaryKey(autoGenerate = true)
-//    @ColumnInfo(name = "idEntreprise")
+
     private String idEntreprise;
     private String nom;
     private String telephone;
     private int nbrPlongeur;
-  //  @Ignore
     private List<Equipment> equipment;
 
 

@@ -16,6 +16,7 @@ import com.example.plongeur.R;
 import com.example.plongeur.databinding.ActivityAddEntrepriseBinding;
 import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.service.EntrepriseService;
+import com.example.plongeur.sharedPreferences.UserShared;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ public class AddEntrepriseActivity extends AppCompatActivity {
     private String id;
    // private EntrepriseController controller;
     private EntrepriseService service;
+    private UserShared shared;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,11 +44,19 @@ public class AddEntrepriseActivity extends AppCompatActivity {
         //recevoir les donnees
         id=getIntent().getStringExtra("id");
         service=new EntrepriseService();
-        //controller=new ViewModelProvider(this).get(EntrepriseController.class);
         getData();
-        binding.btnSave.setOnClickListener(v->ajouterEntreprise());
+        shared=new UserShared(this);
+        binding.btnSave.setOnClickListener(v->valideAjouterEntreprise());
         binding.btnRetour.setOnClickListener(v->toListEntreprise());
 
+
+    }
+
+    private void valideAjouterEntreprise() {
+        if(!shared.getRole().equals(getString(R.string.lire_seulement)))
+            ajouterEntreprise();
+        else
+            Toast.makeText(this, "Vous n'avez pas les droits pour ajouter une entreprise", Toast.LENGTH_SHORT).show();
     }
 
     private void toListEntreprise() {
@@ -75,8 +85,6 @@ public class AddEntrepriseActivity extends AppCompatActivity {
         }
         else {
             Entreprise entreprise=new Entreprise(id,name,tel,Integer.parseInt(nbrPlongeur));
-           //controller.update(entreprise);
-
 
             service.mettreAJourEntreprise(entreprise.getIdEntreprise(),entreprise,succ->{
                 Log.d("Firestore", "Équipement mis à jour !");
@@ -93,7 +101,6 @@ public class AddEntrepriseActivity extends AppCompatActivity {
 
     private void getData() {
         if (id!=null) {
-
             service.getEntrepriseById(id,entreprise->{
                 if (entreprise!= null) {
                     binding.editNom.setText(entreprise.getNom());
@@ -101,17 +108,8 @@ public class AddEntrepriseActivity extends AppCompatActivity {
                     binding.editNbr.setText(String.valueOf(entreprise.getNbrPlongeur()));
                 }
             },e->{
-                Toast.makeText(getApplicationContext(), "il y'a une error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "il y'a une erreur", Toast.LENGTH_SHORT).show();
             });
-
-//
-//            controller.findById(id).observe(this, entreprise -> {
-//                if (entreprise!= null) {
-//                    binding.editNom.setText(entreprise.getNom());
-//                    binding.editTel.setText(entreprise.getTelephone());
-//                    binding.editNbr.setText(String.valueOf(entreprise.getNbrPlongeur()));
-//                }
-//            });
         }
     }
 

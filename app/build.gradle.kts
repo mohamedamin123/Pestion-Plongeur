@@ -45,18 +45,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation ("com.google.android.material:material:1.11.0") // Check latest version
 
-    // Room database
-    implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler) // Use annotationProcessor for Java
-    androidTestImplementation(libs.room.testing)
 
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-auth:21.1.0")// ou la dernière version
+    implementation("com.google.android.gms:play-services-base:18.1.0")
 
 
 

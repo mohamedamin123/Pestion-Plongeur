@@ -19,6 +19,7 @@ import com.example.plongeur.R;
 import com.example.plongeur.databinding.ActivityListEntrepriseBinding;
 import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.service.EntrepriseService;
+import com.example.plongeur.sharedPreferences.UserShared;
 import com.example.plongeur.view.MainActivity;
 import com.example.plongeur.view.equipements.ListEquipmentsActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -35,6 +36,7 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     private List<Entreprise> filtred;
     //private EntrepriseController controller;
     private EntrepriseService service;
+    private UserShared shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,7 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
         filtred = new ArrayList<>();
        // controller=new ViewModelProvider(this).get(EntrepriseController.class);
         service=new EntrepriseService();
+        shared=new UserShared(this);
         getData();
 
 
@@ -101,15 +104,6 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
             Toast.makeText(this, "error dans l'affichage"+e.toString(), Toast.LENGTH_SHORT).show();
         });
 
-
-//        controller.findAll().observe(this, new Observer<List<Entreprise>>() {
-//            @Override
-//            public void onChanged(List<Entreprise> entreprises) {
-//                ListEntrepriseActivity.this.entreprises.clear();
-//                ListEntrepriseActivity.this.entreprises.addAll(entreprises);
-//                adapter.updateList(entreprises);
-//            }
-//        });
     }
 
     private void toMain() {
@@ -118,8 +112,14 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     }
 
     private void ajouterEntreprise() {
-        Intent intent = new Intent(this, AddEntrepriseActivity.class);
-        startActivity(intent);
+        if(!shared.getRole().equals(getString(R.string.lire_seulement)))
+        {
+            Intent intent = new Intent(this, AddEntrepriseActivity.class);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Vous n'avez pas les droits pour ajouter une entreprise", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -147,30 +147,43 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     }
 
     private void modifierEntreprise(Entreprise entreprise) {
-        Intent intent = new Intent(this, AddEntrepriseActivity.class);
-        intent.putExtra("id", entreprise.getIdEntreprise());
-        startActivity(intent);
+        if(!shared.getRole().equals(getString(R.string.lire_seulement)))
+        {
+            Intent intent = new Intent(this, AddEntrepriseActivity.class);
+            intent.putExtra("id", entreprise.getIdEntreprise());
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Vous n'avez pas les droits pour modifier une entreprise", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void supprimerEntreprise(Entreprise entreprise) {
-        new AlertDialog.Builder(this)
-                .setTitle("Supprimer " + entreprise.getNom())
-                .setMessage("Êtes-vous sûr de vouloir supprimer cette entreprise ?")
-                .setPositiveButton("Oui", (dialog, which) -> {
-                    entreprises.remove(entreprise);
-                    adapter.updateList(entreprises);
-                   // controller.deleteById(entreprise.getIdEntreprise());
-                    service.supprimerEntreprise(entreprise.getIdEntreprise(),succ->{
-                        Log.d("Firestore", "Équipement supprimé !");
-                        Toast.makeText(this, "Entreprise supprimée", Toast.LENGTH_SHORT).show();
-                    },e->{
-                        Log.e("Firestore", "Erreur lors de la suppression", e);
-                        Toast.makeText(this, "Erreur lors de la suppression :"+entreprise.getNom(), Toast.LENGTH_SHORT).show();
+        if(!shared.getRole().equals(getString(R.string.lire_seulement)))
+        {
+            new AlertDialog.Builder(this)
+                    .setTitle("Supprimer " + entreprise.getNom())
+                    .setMessage("Êtes-vous sûr de vouloir supprimer cette entreprise ?")
+                    .setPositiveButton("Oui", (dialog, which) -> {
+                        entreprises.remove(entreprise);
+                        adapter.updateList(entreprises);
+                        // controller.deleteById(entreprise.getIdEntreprise());
+                        service.supprimerEntreprise(entreprise.getIdEntreprise(),succ->{
+                            Log.d("Firestore", "Équipement supprimé !");
+                            Toast.makeText(this, "Entreprise supprimée", Toast.LENGTH_SHORT).show();
+                        },e->{
+                            Log.e("Firestore", "Erreur lors de la suppression", e);
+                            Toast.makeText(this, "Erreur lors de la suppression :"+entreprise.getNom(), Toast.LENGTH_SHORT).show();
 
-                    });
+                        });
 
-                })
-                .setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss())
-                .show();
+                    })
+                    .setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss())
+                    .show();
+        } else {
+            Toast.makeText(this, "Vous n'avez pas les droits pour supprimer une entreprise", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 }

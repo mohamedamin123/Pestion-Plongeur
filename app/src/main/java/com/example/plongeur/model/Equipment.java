@@ -2,22 +2,9 @@ package com.example.plongeur.model;
 
 import android.net.Uri;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.PrimaryKey;
-//@Entity(
-//        tableName = "equipments",
-//        foreignKeys = @ForeignKey(
-//                entity = Entreprise.class,
-//                parentColumns = "idEntreprise",
-//                childColumns = "idEntreprise",
-//                onDelete = ForeignKey.CASCADE
-//        )
-//)
+
 public class Equipment {
-//    @PrimaryKey(autoGenerate = true)
-//    @ColumnInfo(name = "idEquipement")
+
     private String idEquipement;
 
     private String name;

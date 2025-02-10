@@ -20,6 +20,10 @@
     <string name="password">Password</string>
     <string name="role">Role</string>
     <string name="liste_des_utilisateurs">Liste des utilisateurs</string>
+    <string name="lire_seulement">Lire seulement</string>
+    <string name="lire_modifier">Lire/Modifier</string>
+
+
 
 
     <!-- Spinner items -->

@@ -15,6 +15,7 @@ import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.model.Equipment;
 import com.example.plongeur.service.EntrepriseService;
 import com.example.plongeur.service.EquipmentService;
+import com.example.plongeur.sharedPreferences.UserShared;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,8 @@ public class ListEquipmentsActivity extends AppCompatActivity implements Equipme
     private EntrepriseService entrepriseService;
     private String id;
     private Entreprise entrepriseUtilise;
-    String name="MonEntreprise";
+    private String name="MonEntreprise";
+    private UserShared shared;
 
 
     @Override
@@ -47,7 +49,7 @@ public class ListEquipmentsActivity extends AppCompatActivity implements Equipme
         service = new EquipmentService();
         entrepriseService = new EntrepriseService();
         id = getIntent().getStringExtra("id");
-
+        shared=new UserShared(this);
         // Initialiser l'adaptateur une seule fois
         adapter = new EquipmentAdapter(equipments, this,this);
         binding.recylerEquipments.setLayoutManager(new LinearLayoutManager(this));
@@ -142,65 +144,13 @@ public class ListEquipmentsActivity extends AppCompatActivity implements Equipme
 
     @Override
     public void onAugmenter(Equipment item, Button btn, TextView t) {
-        btn.setEnabled(false); // Désactiver le bouton
+        if(!shared.getRole().equals(getString(R.string.lire_seulement))) {
 
-        if (id.equals(name)) {
-            item.setQte(item.getQte() + 1);
-
-            for (Equipment e : equipments) {
-                if (e.getName().equals(item.getName())) {
-                    e.setQte(item.getQte());
-                    break;
-                }
-            }
-
-            entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, succ -> {
-                t.setText("Quantity : " + item.getQte());
-                btn.setEnabled(true); // Réactiver le bouton après l'opération
-            }, err -> {
-                btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
-            });
-        } else {
-            entrepriseService.getEntrepriseById(name, monEntreprise -> {
-                if (monEntreprise != null && monEntreprise.getEquipment() != null) {
-                    for (Equipment e : monEntreprise.getEquipment()) {
-                        if (e.getName().equals(item.getName())) {
-                            if (e.getQte() > 0) {
-                                e.setQte(e.getQte() - 1);
-                                item.setQte(item.getQte() + 1);
-
-                                entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
-                                    entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
-                                        t.setText("Quantity : " + item.getQte());
-                                        btn.setEnabled(true); // Réactiver le bouton après l'opération
-                                    }, error -> {
-                                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
-                                    });
-                                }, err -> {
-                                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
-                                });
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Stock insuffisant pour " + item.getName(), Toast.LENGTH_SHORT).show();
-                                btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
-                            }
-                            break;
-                        }
-                    }
-                }
-            }, err -> {
-                btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
-            });
-        }
-    }
-
-    @Override
-    public void onDiminuer(Equipment item, Button btn, TextView t) {
-        btn.setEnabled(false); // Désactiver le bouton
-
-        if (item.getQte() > 0) {
-            item.setQte(item.getQte() - 1);
+            btn.setEnabled(false); // Désactiver le bouton
 
             if (id.equals(name)) {
+                item.setQte(item.getQte() + 1);
+
                 for (Equipment e : equipments) {
                     if (e.getName().equals(item.getName())) {
                         e.setQte(item.getQte());
@@ -219,17 +169,24 @@ public class ListEquipmentsActivity extends AppCompatActivity implements Equipme
                     if (monEntreprise != null && monEntreprise.getEquipment() != null) {
                         for (Equipment e : monEntreprise.getEquipment()) {
                             if (e.getName().equals(item.getName())) {
-                                e.setQte(e.getQte() + 1);
-                                entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
-                                    entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
-                                        t.setText("Quantity : " + item.getQte());
-                                        btn.setEnabled(true); // Réactiver le bouton après l'opération
-                                    }, error -> {
+                                if (e.getQte() > 0) {
+                                    e.setQte(e.getQte() - 1);
+                                    item.setQte(item.getQte() + 1);
+
+                                    entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
+                                        entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
+                                            t.setText("Quantity : " + item.getQte());
+                                            btn.setEnabled(true); // Réactiver le bouton après l'opération
+                                        }, error -> {
+                                            btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                        });
+                                    }, err -> {
                                         btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
                                     });
-                                }, err -> {
-                                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
-                                });
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Stock insuffisant pour " + item.getName(), Toast.LENGTH_SHORT).show();
+                                    btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
+                                }
                                 break;
                             }
                         }
@@ -239,9 +196,69 @@ public class ListEquipmentsActivity extends AppCompatActivity implements Equipme
                 });
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Impossible de diminuer : quantité déjà à 0", Toast.LENGTH_SHORT).show();
-            btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
+            Toast.makeText(this, "Vous n'avez pas les droits pour augmenter la qantite", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    @Override
+    public void onDiminuer(Equipment item, Button btn, TextView t) {
+
+        if(!shared.getRole().equals(getString(R.string.lire_seulement))) {
+
+            btn.setEnabled(false); // Désactiver le bouton
+
+            if (item.getQte() > 0) {
+                item.setQte(item.getQte() - 1);
+
+                if (id.equals(name)) {
+                    for (Equipment e : equipments) {
+                        if (e.getName().equals(item.getName())) {
+                            e.setQte(item.getQte());
+                            break;
+                        }
+                    }
+
+                    entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, succ -> {
+                        t.setText("Quantity : " + item.getQte());
+                        btn.setEnabled(true); // Réactiver le bouton après l'opération
+                    }, err -> {
+                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                    });
+                } else {
+                    entrepriseService.getEntrepriseById(name, monEntreprise -> {
+                        if (monEntreprise != null && monEntreprise.getEquipment() != null) {
+                            for (Equipment e : monEntreprise.getEquipment()) {
+                                if (e.getName().equals(item.getName())) {
+                                    e.setQte(e.getQte() + 1);
+                                    entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
+                                        entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
+                                            t.setText("Quantity : " + item.getQte());
+                                            btn.setEnabled(true); // Réactiver le bouton après l'opération
+                                        }, error -> {
+                                            btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                        });
+                                    }, err -> {
+                                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    }, err -> {
+                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                    });
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Impossible de diminuer : quantité déjà à 0", Toast.LENGTH_SHORT).show();
+                btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
+            }
+        } else {
+            Toast.makeText(this, "Vous n'avez pas les droits pour diminuer la qantite", Toast.LENGTH_SHORT).show();
+
+        }
+
+
     }
 
 }

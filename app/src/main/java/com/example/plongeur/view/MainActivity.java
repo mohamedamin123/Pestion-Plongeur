@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.plongeur.databinding.ActivityMainBinding;
 import com.example.plongeur.model.User;
 import com.example.plongeur.service.UserService;
+import com.example.plongeur.sharedPreferences.UserShared;
 import com.example.plongeur.view.client.AddNouveauCompteActivity;
 import com.example.plongeur.view.client.ListeUserActivity;
 import com.example.plongeur.view.client.LoginActivity;
@@ -23,16 +24,22 @@ public class MainActivity extends AppCompatActivity {
     private User userCourant;
     private UserService service;
     private FirebaseUser user;
+    private UserShared shared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         service = new UserService();
+        shared=new UserShared(this);
 
         if (user == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -48,22 +55,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        service.findByEmail(user.getEmail(), user1 -> {
-            userCourant = user1;
-        }, e -> {
-            // Handle failure (optional)
-        });
+        userCourant=new User();
+        userCourant.setEmail(shared.getEmail());
+        userCourant.setRole(shared.getRole());
+        userCourant.setIdUser(shared.getId());
+//        service.findByEmail(user.getEmail(), user1 -> {
+//            userCourant = user1;
+//
+//        }, e -> {
+//            // Handle failure (optional)
+//            Toast.makeText(MainActivity.this, "Erreur lors de la récupération des données", Toast.LENGTH_SHORT).show();
+//            e.printStackTrace();
+//        });
     }
 
     private void toListeUser() {
-        if (userCourant.getRole().equals("admin")) {
-            startActivity(new Intent(MainActivity.this, ListeUserActivity.class));
+
+        if(userCourant!=null) {
+            if (userCourant.getRole().equals("admin")) {
+                startActivity(new Intent(MainActivity.this, ListeUserActivity.class));
+            } else {
+                Toast.makeText(MainActivity.this, "Vous n'avez pas le droit d'accéder à cette page", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(MainActivity.this, "Vous n'avez pas le droit d'accéder à cette page", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "reconnect a votre compte", Toast.LENGTH_SHORT).show();
+            deconnexion();
         }
+
     }
 
     private void deconnexion() {
+        shared.clearUser();
         mAuth.signOut();
         Toast.makeText(MainActivity.this, "Déconnexion réussie", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
