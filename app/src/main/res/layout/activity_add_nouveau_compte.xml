@@ -9,7 +9,7 @@
     android:padding="16dp"
     android:gravity="center"
     android:background="@color/white"
-    tools:context=".view.entreprise.AddEntrepriseActivity">
+    tools:context=".view.client.AddNouveauCompteActivity">
 
     <LinearLayout
         android:orientation="vertical"
@@ -21,7 +21,7 @@
             android:id="@+id/textTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ajouter_entreprise"
+            android:text="Ajouter un nouveau compte"
             android:layout_gravity="center"
             android:textSize="28sp"
             android:textColor="@android:color/black"
@@ -45,30 +45,30 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Champ Nom -->
+                <!-- Champ Email -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/nom"
+                    android:text="@string/email"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:paddingBottom="4dp"/>
 
                 <EditText
-                    android:id="@+id/editNom"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="@string/nom"
+                    android:hint="@string/email"
                     android:inputType="text"
                     android:padding="12dp"/>
 
-                <!-- Champ Téléphone -->
+                <!-- Champ Mot de Passe -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/telephone"
+                    android:text="@string/password"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -76,33 +76,33 @@
                     android:paddingBottom="4dp"/>
 
                 <EditText
-                    android:id="@+id/editTel"
+                    android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="@string/telephone"
-                    android:inputType="phone"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
                     android:padding="12dp"/>
 
-                <!-- Champ Nombre de plongeurs -->
+                <!-- Champ Rôle -->
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/nombre_plongeurs"
+                    android:text="Rôle"
                     android:textColor="@android:color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:paddingTop="12dp"
                     android:paddingBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/editNbr"
+                <Spinner
+                    android:id="@+id/role"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/rounded_edittext"
-                    android:hint="@string/zero"
-                    android:inputType="number"
+                    android:entries="@array/role_options"
                     android:padding="12dp"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -120,7 +120,7 @@
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="@string/retour"
+                android:text="Retour"
                 android:backgroundTint="@android:color/holo_red_light"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
@@ -128,11 +128,11 @@
 
             <!-- Bouton Enregistrer -->
             <Button
-                android:id="@+id/btnSave"
+                android:id="@+id/btnCreateAccount"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:layout_weight="1"
-                android:text="@string/ajouter"
+                android:text="Ajouter"
                 android:backgroundTint="@android:color/holo_blue_dark"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"/>

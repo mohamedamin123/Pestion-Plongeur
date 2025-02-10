@@ -15,4 +15,17 @@
     <string name="telephone">Téléphone</string>
     <string name="nombre_plongeurs">Nombre de plongeurs</string>
     <string name="enregistrer">Enregistrer</string>
+    <string name="se_connecter">Se connecter</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="role">Role</string>
+    <string name="liste_des_utilisateurs">Liste des utilisateurs</string>
+
+
+    <!-- Spinner items -->
+    <string-array name="role_options">
+        <item>Lire seulement</item>
+        <item>Lire/Modifier</item>
+    </string-array>
+
 </resources>

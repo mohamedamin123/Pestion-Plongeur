@@ -6,27 +6,27 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
-@Entity(
-        tableName = "equipments",
-        foreignKeys = @ForeignKey(
-                entity = Entreprise.class,
-                parentColumns = "idEntreprise",
-                childColumns = "idEntreprise",
-                onDelete = ForeignKey.CASCADE
-        )
-)
+//@Entity(
+//        tableName = "equipments",
+//        foreignKeys = @ForeignKey(
+//                entity = Entreprise.class,
+//                parentColumns = "idEntreprise",
+//                childColumns = "idEntreprise",
+//                onDelete = ForeignKey.CASCADE
+//        )
+//)
 public class Equipment {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "idEquipement")
-    private Integer idEquipement;
+//    @PrimaryKey(autoGenerate = true)
+//    @ColumnInfo(name = "idEquipement")
+    private String idEquipement;
 
     private String name;
     private int image;
     private String status;
     private int qte;
 
-    @ColumnInfo(index = true) // Indice pour améliorer les performances des requêtes
-    private Integer idEntreprise; // Permettre NULL
+    //@ColumnInfo(index = true) // Indice pour améliorer les performances des requêtes
+    private String idEntreprise; // Permettre NULL
 
     public Equipment() {
     }
@@ -38,7 +38,7 @@ public class Equipment {
         this.idEntreprise = null; // Aucune entreprise associée
     }
 
-    public Equipment(String name, int image, Integer idEntreprise) {
+    public Equipment(String name, int image, String idEntreprise) {
         this(name, image);
         this.idEntreprise = idEntreprise; // Spécifier une entreprise si besoin
     }
@@ -46,11 +46,11 @@ public class Equipment {
     // Getters et Setters
 
 
-    public Integer getIdEquipement() {
+    public String getIdEquipement() {
         return idEquipement;
     }
 
-    public void setIdEquipement(Integer idEquipement) {
+    public void setIdEquipement(String idEquipement) {
         this.idEquipement = idEquipement;
     }
 
@@ -86,11 +86,11 @@ public class Equipment {
         this.qte = qte;
     }
 
-    public Integer getIdEntreprise() {
+    public String getIdEntreprise() {
         return idEntreprise;
     }
 
-    public void setIdEntreprise(Integer idEntreprise) {
+    public void setIdEntreprise(String idEntreprise) {
         this.idEntreprise = idEntreprise;
     }
 }

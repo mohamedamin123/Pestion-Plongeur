@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "74312033815",
+    "project_id": "materiel-plonge",
+    "storage_bucket": "materiel-plonge.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74312033815:android:cd8a69939dd6859e7ede52",
+        "android_client_info": {
+          "package_name": "com.example.plongeur"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRa9Qzag4HseaKbJA8b7jnvtVq9MrU1i4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

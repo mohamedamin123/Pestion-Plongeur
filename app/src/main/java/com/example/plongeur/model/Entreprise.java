@@ -2,36 +2,61 @@ package com.example.plongeur.model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.example.plongeur.R;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-@Entity(tableName = "entreprises")
+//@Entity(tableName = "entreprises")
 public class Entreprise {
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "idEntreprise")
-    private Integer idEntreprise;
+//    @PrimaryKey(autoGenerate = true)
+//    @ColumnInfo(name = "idEntreprise")
+    private String idEntreprise;
     private String nom;
     private String telephone;
     private int nbrPlongeur;
-    @Ignore
+  //  @Ignore
     private List<Equipment> equipment;
 
 
     public Entreprise(){
+        this.nom="Mon Entreprise";
+        this.telephone="";
+        this.nbrPlongeur=0;
         this.equipment=new ArrayList<>();
+        this.equipment.addAll(Arrays.asList(
+                new Equipment("Gilet", R.drawable.gilet),
+                new Equipment("Détendeur", R.drawable.detendeur),
+                new Equipment("Masque", R.drawable.mask),
+                new Equipment("Palmes", R.drawable.palm),
+                new Equipment("Bottes", R.drawable.boot),
+                new Equipment("Bouteille", R.drawable.bouteille),
+                new Equipment("Combinaison", R.drawable.combinaison),
+                new Equipment("Ceinture", R.drawable.ceinture)
+        ));
     }
     public Entreprise(String nom, String telephone, int nbrPlongeur) {
         this.nom = nom;
         this.telephone = telephone;
         this.nbrPlongeur = nbrPlongeur;
-        this.equipment=new ArrayList<>();
-    }
+        this.equipment = new ArrayList<>();
 
-    public Entreprise(Integer idEntreprise,String nom, String telephone, int nbrPlongeur) {
+        this.equipment.addAll(Arrays.asList(
+                new Equipment("Gilet", R.drawable.gilet),
+                new Equipment("Détendeur", R.drawable.detendeur),
+                new Equipment("Masque", R.drawable.mask),
+                new Equipment("Palmes", R.drawable.palm),
+                new Equipment("Bottes", R.drawable.boot),
+                new Equipment("Bouteille", R.drawable.bouteille),
+                new Equipment("Combinaison", R.drawable.combinaison),
+                new Equipment("Ceinture", R.drawable.ceinture)
+        ));
+    }
+    public Entreprise(String idEntreprise,String nom, String telephone, int nbrPlongeur) {
         this(nom,telephone,nbrPlongeur);
         this.idEntreprise = idEntreprise;
     }
@@ -39,11 +64,11 @@ public class Entreprise {
         this(entreprise.getIdEntreprise(),entreprise.getNom(), entreprise.getTelephone(), entreprise.getNbrPlongeur());
     }
 
-    public Integer getIdEntreprise() {
+    public String getIdEntreprise() {
         return idEntreprise;
     }
 
-    public void setIdEntreprise(Integer idEntreprise) {
+    public void setIdEntreprise(String idEntreprise) {
         this.idEntreprise = idEntreprise;
     }
 

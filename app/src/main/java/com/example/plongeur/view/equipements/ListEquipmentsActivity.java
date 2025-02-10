@@ -1,34 +1,41 @@
 package com.example.plongeur.view.equipements;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.plongeur.R;
-import com.example.plongeur.controller.EquipementController;
 import com.example.plongeur.databinding.ActivityListEquipmentsBinding;
+import com.example.plongeur.model.Entreprise;
 import com.example.plongeur.model.Equipment;
-import com.example.plongeur.view.MainActivity;
+import com.example.plongeur.service.EntrepriseService;
+import com.example.plongeur.service.EquipmentService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ListEquipmentsActivity extends AppCompatActivity {
+public class ListEquipmentsActivity extends AppCompatActivity implements EquipmentAdapter.OnItemClickListener {
 
     private ActivityListEquipmentsBinding binding;
     private EquipmentAdapter adapter;
-    private List<Equipment>equipments;
-    private EquipementController controller;
-    int id;
+    private List<Equipment> equipments, anciens;
+    private EquipmentService service;
+    private EntrepriseService entrepriseService;
+    private String id;
+    private Entreprise entrepriseUtilise;
+    String name="MonEntreprise";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivityListEquipmentsBinding.inflate(getLayoutInflater());
+        binding = ActivityListEquipmentsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
     }
 
@@ -36,87 +43,35 @@ public class ListEquipmentsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         equipments = new ArrayList<>();
-        controller=new ViewModelProvider(this).get(EquipementController.class);;
-         id=getIntent().getIntExtra("id",-1);
+        anciens = new ArrayList<>();
+        service = new EquipmentService();
+        entrepriseService = new EntrepriseService();
+        id = getIntent().getStringExtra("id");
 
+        // Initialiser l'adaptateur une seule fois
+        adapter = new EquipmentAdapter(equipments, this,this);
+        binding.recylerEquipments.setLayoutManager(new LinearLayoutManager(this));
+        binding.recylerEquipments.setAdapter(adapter);
 
         getData();
         changeTitre();
 
-
-        adapter = new EquipmentAdapter(equipments,this);
-
-        binding.recylerEquipments.setLayoutManager(new LinearLayoutManager(this));
-        binding.recylerEquipments.setAdapter(adapter);
-
-        binding.btnAnnuler.setOnClickListener(v->toMain());
-        binding.btnAjouter.setOnClickListener(v->save());
+        binding.btnAnnuler.setOnClickListener(v -> toMain());
     }
 
     private void changeTitre() {
-        String nom=getIntent().getStringExtra("nom");
-        if(nom!=null){
-            binding.titre.setText("Équipements de l'entreprise : "+nom);
+        String nom = getIntent().getStringExtra("nom");
+        if (nom != null) {
+            binding.titre.setText(nom);
         }
-    }
-
-
-    private void save() {
-        for (int i = 0; i < equipments.size(); i++) {
-            Equipment equipment = equipments.get(i);
-            controller.update(equipment); // Met à jour chaque équipement dans la base de données
-        }
-
-        // Afficher un message de confirmation
-        Toast.makeText(this, "Modifications enregistrées avec succès", Toast.LENGTH_SHORT).show();
-        toMain();
     }
 
 
     private void toMain() {
-       finish();
+        finish();
     }
-
-    private void getData() {
-
-        if(id==-1) {
-            // Charger uniquement les équipements qui ne sont pas associés à une entreprise
-            controller.findStockPersonnel().observe(this, new Observer<List<Equipment>>() {
-                @Override
-                public void onChanged(List<Equipment> stockEquipments) {
-                    equipments.clear();
-                    if (stockEquipments.isEmpty()) {
-
-                        // Ajouter des équipements par défaut si le stock est vide
-                        ajouterEquipementsParDefaut();
-                    } else {
-                        equipments.addAll(stockEquipments);
-
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        } else {
-            controller.findByIdEntreprise(id).observe(this, new Observer<List<Equipment>>() {
-                @Override
-                public void onChanged(List<Equipment> equipment) {
-                    equipments.clear();
-                    if(equipment.isEmpty()) {
-                        ajouterEquipementsParDefaut();
-                    }else {
-                        equipments.addAll(equipment);
-                    }
-
-                    adapter.notifyDataSetChanged();
-                }
-            });
-        }
-
-    }
-
-    // Insérer des équipements par défaut dans le stock personnel
-    private void ajouterEquipementsParDefaut() {
-        Equipment[] defaultEquipments = {
+    private List<Equipment> getEquipementsParDefaut() {
+        return Arrays.asList(
                 new Equipment("Gilet", R.drawable.gilet),
                 new Equipment("Détendeur", R.drawable.detendeur),
                 new Equipment("Masque", R.drawable.mask),
@@ -125,12 +80,167 @@ public class ListEquipmentsActivity extends AppCompatActivity {
                 new Equipment("Bouteille", R.drawable.bouteille),
                 new Equipment("Combinaison", R.drawable.combinaison),
                 new Equipment("Ceinture", R.drawable.ceinture)
-        };
+        );
+    }
 
-        for (Equipment equipment : defaultEquipments) {
-            if(id!=-1)
-                equipment.setIdEntreprise(id);
-            controller.insert(equipment);
+    private void getData() {
+        entrepriseService.getEntrepriseById(id, entreprise -> {
+            if (entreprise != null) {
+                Log.d("getData", "Entreprise trouvée: " + entreprise.getNom());
+                entrepriseUtilise=entreprise;
+                // Vérifier si `equipment` est null ou vide
+                if (entreprise.getEquipment() == null || entreprise.getEquipment().isEmpty()) {
+                    Log.d("getData", "Aucun équipement trouvé, ajout des équipements par défaut...");
+                    entreprise.setEquipment(getEquipementsParDefaut()); // Ajouter équipements par défaut
+
+                    // Mettre à jour Firestore avec les nouveaux équipements
+                    entrepriseService.mettreAJourEntreprise(id, entreprise, success -> {
+                        Log.d("getData", "Équipements ajoutés à l'entreprise !");
+                    }, e -> Log.e("getData", "Erreur lors de la mise à jour de l'entreprise: " + e.getMessage()));
+                }
+
+                // Mise à jour de l'affichage
+                equipments.clear();
+                equipments.addAll(entreprise.getEquipment());
+                runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+            } else {
+                // Si l'entreprise n'existe pas, la créer
+                Log.d("getData", "Entreprise non trouvée, création en cours...");
+                creerNouvelleEntreprise();
+            }
+        }, e -> {
+            Log.e("getData", "Erreur Firestore: " + e.getMessage());
+
+            if (e.getMessage().contains("Entreprise non trouvée")) {
+                creerNouvelleEntreprise();
+            } else {
+                Toast.makeText(getApplicationContext(), "Erreur de récupération des données", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void creerNouvelleEntreprise() {
+        Entreprise nouvelleEntreprise = new Entreprise();
+        nouvelleEntreprise.setIdEntreprise(id);
+        nouvelleEntreprise.setEquipment(getEquipementsParDefaut()); // Ajoute équipements par défaut
+
+        entrepriseService.ajouterEntreprisePersonnele(nouvelleEntreprise, success -> {
+            Log.d("getData", "Nouvelle entreprise créée avec succès !");
+            Toast.makeText(getApplicationContext(), "Nouvelle entreprise créée", Toast.LENGTH_SHORT).show();
+
+            // Mise à jour de l'affichage
+            equipments.clear();
+            equipments.addAll(nouvelleEntreprise.getEquipment());
+            runOnUiThread(() -> adapter.notifyDataSetChanged());
+
+        }, e -> {
+            Log.e("getData", "Erreur lors de la création de l'entreprise: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Erreur création entreprise", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onAugmenter(Equipment item, Button btn, TextView t) {
+        btn.setEnabled(false); // Désactiver le bouton
+
+        if (id.equals(name)) {
+            item.setQte(item.getQte() + 1);
+
+            for (Equipment e : equipments) {
+                if (e.getName().equals(item.getName())) {
+                    e.setQte(item.getQte());
+                    break;
+                }
+            }
+
+            entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, succ -> {
+                t.setText("Quantity : " + item.getQte());
+                btn.setEnabled(true); // Réactiver le bouton après l'opération
+            }, err -> {
+                btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+            });
+        } else {
+            entrepriseService.getEntrepriseById(name, monEntreprise -> {
+                if (monEntreprise != null && monEntreprise.getEquipment() != null) {
+                    for (Equipment e : monEntreprise.getEquipment()) {
+                        if (e.getName().equals(item.getName())) {
+                            if (e.getQte() > 0) {
+                                e.setQte(e.getQte() - 1);
+                                item.setQte(item.getQte() + 1);
+
+                                entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
+                                    entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
+                                        t.setText("Quantity : " + item.getQte());
+                                        btn.setEnabled(true); // Réactiver le bouton après l'opération
+                                    }, error -> {
+                                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                    });
+                                }, err -> {
+                                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                });
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Stock insuffisant pour " + item.getName(), Toast.LENGTH_SHORT).show();
+                                btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
+                            }
+                            break;
+                        }
+                    }
+                }
+            }, err -> {
+                btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+            });
+        }
+    }
+
+    @Override
+    public void onDiminuer(Equipment item, Button btn, TextView t) {
+        btn.setEnabled(false); // Désactiver le bouton
+
+        if (item.getQte() > 0) {
+            item.setQte(item.getQte() - 1);
+
+            if (id.equals(name)) {
+                for (Equipment e : equipments) {
+                    if (e.getName().equals(item.getName())) {
+                        e.setQte(item.getQte());
+                        break;
+                    }
+                }
+
+                entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, succ -> {
+                    t.setText("Quantity : " + item.getQte());
+                    btn.setEnabled(true); // Réactiver le bouton après l'opération
+                }, err -> {
+                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                });
+            } else {
+                entrepriseService.getEntrepriseById(name, monEntreprise -> {
+                    if (monEntreprise != null && monEntreprise.getEquipment() != null) {
+                        for (Equipment e : monEntreprise.getEquipment()) {
+                            if (e.getName().equals(item.getName())) {
+                                e.setQte(e.getQte() + 1);
+                                entrepriseService.mettreAJourEntreprise(name, monEntreprise, succ -> {
+                                    entrepriseService.mettreAJourEntreprise(id, entrepriseUtilise, success -> {
+                                        t.setText("Quantity : " + item.getQte());
+                                        btn.setEnabled(true); // Réactiver le bouton après l'opération
+                                    }, error -> {
+                                        btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                    });
+                                }, err -> {
+                                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                                });
+                                break;
+                            }
+                        }
+                    }
+                }, err -> {
+                    btn.setEnabled(true); // Réactiver le bouton en cas d'erreur
+                });
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Impossible de diminuer : quantité déjà à 0", Toast.LENGTH_SHORT).show();
+            btn.setEnabled(true); // Réactiver le bouton si l'opération échoue
         }
     }
 

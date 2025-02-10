@@ -53,12 +53,22 @@
 
     <!-- Bouton pour transférer un équipement -->
     <Button
-        android:id="@+id/btnHistorique"
+        android:id="@+id/btnListeUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Historique"
+        android:text="Liste d'utilisateurs"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/orange"
+        android:textColor="@color/white"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/btnDeconnexion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="déconnexion"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/red"
         android:textColor="@color/white"
         android:padding="10dp" />
 

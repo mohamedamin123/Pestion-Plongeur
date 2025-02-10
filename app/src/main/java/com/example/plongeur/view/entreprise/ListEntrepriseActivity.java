@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,10 +15,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.plongeur.R;
-import com.example.plongeur.controller.EntrepriseController;
-import com.example.plongeur.controller.EquipementController;
+
 import com.example.plongeur.databinding.ActivityListEntrepriseBinding;
 import com.example.plongeur.model.Entreprise;
+import com.example.plongeur.service.EntrepriseService;
 import com.example.plongeur.view.MainActivity;
 import com.example.plongeur.view.equipements.ListEquipmentsActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -32,7 +33,8 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     private EntrepriseAdapter adapter;
     private List<Entreprise> entreprises;
     private List<Entreprise> filtred;
-    private EntrepriseController controller;
+    //private EntrepriseController controller;
+    private EntrepriseService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,8 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
 
         entreprises = new ArrayList<>();
         filtred = new ArrayList<>();
-        controller=new ViewModelProvider(this).get(EntrepriseController.class);
+       // controller=new ViewModelProvider(this).get(EntrepriseController.class);
+        service=new EntrepriseService();
         getData();
 
 
@@ -87,14 +90,26 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
     }
 
     private void getData() {
-        controller.findAll().observe(this, new Observer<List<Entreprise>>() {
-            @Override
-            public void onChanged(List<Entreprise> entreprises) {
-                ListEntrepriseActivity.this.entreprises.clear();
-                ListEntrepriseActivity.this.entreprises.addAll(entreprises);
-                adapter.updateList(entreprises);
-            }
+
+        service.getAllEntreprisesExcluding("MonEntreprise",entreprises1->{
+            ListEntrepriseActivity.this.entreprises.clear();
+            ListEntrepriseActivity.this.entreprises.addAll(entreprises1);
+            adapter.updateList(entreprises);
+
+        },e->{
+            Log.e("Firestore", "Erreur de récupération", e);
+            Toast.makeText(this, "error dans l'affichage"+e.toString(), Toast.LENGTH_SHORT).show();
         });
+
+
+//        controller.findAll().observe(this, new Observer<List<Entreprise>>() {
+//            @Override
+//            public void onChanged(List<Entreprise> entreprises) {
+//                ListEntrepriseActivity.this.entreprises.clear();
+//                ListEntrepriseActivity.this.entreprises.addAll(entreprises);
+//                adapter.updateList(entreprises);
+//            }
+//        });
     }
 
     private void toMain() {
@@ -144,8 +159,16 @@ public class ListEntrepriseActivity extends AppCompatActivity implements Entrepr
                 .setPositiveButton("Oui", (dialog, which) -> {
                     entreprises.remove(entreprise);
                     adapter.updateList(entreprises);
-                    controller.deleteById(entreprise.getIdEntreprise());
-                    Toast.makeText(this, "Entreprise supprimée", Toast.LENGTH_SHORT).show();
+                   // controller.deleteById(entreprise.getIdEntreprise());
+                    service.supprimerEntreprise(entreprise.getIdEntreprise(),succ->{
+                        Log.d("Firestore", "Équipement supprimé !");
+                        Toast.makeText(this, "Entreprise supprimée", Toast.LENGTH_SHORT).show();
+                    },e->{
+                        Log.e("Firestore", "Erreur lors de la suppression", e);
+                        Toast.makeText(this, "Erreur lors de la suppression :"+entreprise.getNom(), Toast.LENGTH_SHORT).show();
+
+                    });
+
                 })
                 .setNegativeButton("Annuler", (dialog, which) -> dialog.dismiss())
                 .show();

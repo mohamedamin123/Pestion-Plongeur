@@ -2,6 +2,7 @@ package com.example.plongeur.view.entreprise;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -12,17 +13,22 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.plongeur.R;
-import com.example.plongeur.controller.EntrepriseController;
 import com.example.plongeur.databinding.ActivityAddEntrepriseBinding;
 import com.example.plongeur.model.Entreprise;
+import com.example.plongeur.service.EntrepriseService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class AddEntrepriseActivity extends AppCompatActivity {
 
     private ActivityAddEntrepriseBinding binding;
-    private int id;
-    private EntrepriseController controller;
+    private String id;
+   // private EntrepriseController controller;
+    private EntrepriseService service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,8 +40,9 @@ public class AddEntrepriseActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         //recevoir les donnees
-        id=getIntent().getIntExtra("id",-1);
-        controller=new ViewModelProvider(this).get(EntrepriseController.class);
+        id=getIntent().getStringExtra("id");
+        service=new EntrepriseService();
+        //controller=new ViewModelProvider(this).get(EntrepriseController.class);
         getData();
         binding.btnSave.setOnClickListener(v->ajouterEntreprise());
         binding.btnRetour.setOnClickListener(v->toListEntreprise());
@@ -57,14 +64,27 @@ public class AddEntrepriseActivity extends AppCompatActivity {
             Toast.makeText(this, "Numero de telephone invalide", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(id==-1) {
-            Toast.makeText(this, "l'entreprise "+name+" ajouter avec succes", Toast.LENGTH_SHORT).show();
-            controller.insert(new Entreprise(name,tel,Integer.parseInt(nbrPlongeur)));
+        if(id==null) {
+            Entreprise entreprise=(new Entreprise(name,tel,Integer.parseInt(nbrPlongeur)));
+            service.ajouterEntreprise(entreprise,succ->{
+                Log.d("Firestore", "Équipement ajouté avec succès !");
+                Toast.makeText(this, "l'entreprise "+name+" ajouter avec succes", Toast.LENGTH_SHORT).show();
+            },e->{
+                Log.e("Firestore", "Erreur lors de l'ajout de l'équipement", e);
+            });
         }
         else {
-            Toast.makeText(this, "l'entreprise "+name+" modifier avec succes", Toast.LENGTH_SHORT).show();
             Entreprise entreprise=new Entreprise(id,name,tel,Integer.parseInt(nbrPlongeur));
-           controller.update(entreprise);
+           //controller.update(entreprise);
+
+
+            service.mettreAJourEntreprise(entreprise.getIdEntreprise(),entreprise,succ->{
+                Log.d("Firestore", "Équipement mis à jour !");
+                Toast.makeText(this, "l'entreprise "+name+" modifier avec succes", Toast.LENGTH_SHORT).show();
+            },e->{
+                Log.e("Firestore", "Erreur de mise à jour", e);
+                Toast.makeText(this, "Erreur de mise à jour", Toast.LENGTH_SHORT).show();
+            });
         }
 
         Intent intent = new Intent(this, ListEntrepriseActivity.class);
@@ -72,14 +92,26 @@ public class AddEntrepriseActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        if (id!=-1) {
-            controller.findById(id).observe(this, entreprise -> {
+        if (id!=null) {
+
+            service.getEntrepriseById(id,entreprise->{
                 if (entreprise!= null) {
                     binding.editNom.setText(entreprise.getNom());
                     binding.editTel.setText(entreprise.getTelephone());
                     binding.editNbr.setText(String.valueOf(entreprise.getNbrPlongeur()));
                 }
+            },e->{
+                Toast.makeText(getApplicationContext(), "il y'a une error", Toast.LENGTH_SHORT).show();
             });
+
+//
+//            controller.findById(id).observe(this, entreprise -> {
+//                if (entreprise!= null) {
+//                    binding.editNom.setText(entreprise.getNom());
+//                    binding.editTel.setText(entreprise.getTelephone());
+//                    binding.editNbr.setText(String.valueOf(entreprise.getNbrPlongeur()));
+//                }
+//            });
         }
     }
 
